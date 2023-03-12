@@ -1,0 +1,44 @@
+ title Create Group with type Class
+
+participant "Workspace Admin" as w
+participant "FUniverse Admin Client" as f
+participant "Search Service" as ss
+participant "Group Controller" as gc
+participant "Group Service" as gs
+
+w->f:Click Create Group button
+activate f
+w<--f:Display Create Group popup
+w->f:Select Type Class
+w->f:Search Curriculum
+f->ss:GET\n/search?entity=curriculum\n+ {paramToSearch}
+activate ss
+f<--ss:Curriculum list
+deactivate ss
+alt if there is no curriculum match condition
+w<--f:No Option
+else
+w<--f: Curriculum options list
+
+w->f:Select Curriculum and click Save
+f->gc:POST: /group
+activate gc
+alt if Curriculum do not have value
+f<--gc:<color:#red>BAD_REQUEST: Missing required property</color>
+w<--f:Curriculum is required
+else
+gc->gs:generateNameForClass()
+activate gs
+note right of gs: Name of Class will be depend\non the Specialization and school\nyear of Curriculum
+gc<--gs:Class's name
+gc->gs:save()
+gc<--gs:New Class data
+deactivate gs
+f<--gc:<color:#green>CREATED</color>
+deactivate gc
+w<--f: Display Group list table with new Class
+deactivate f
+end
+end f
+
+
