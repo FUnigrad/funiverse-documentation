@@ -1,0 +1,31 @@
+title Get all Joined Group
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application \nClient" as f
+control "User \nController" as gc
+participant "Group Member \nService" as gs
+
+database #blue:1 "Database" as db
+
+w->f:Click  See all… button\n on Social Network Menu
+activate f
+
+f->gc:GET: /api/user/{id}/groups
+activate gc
+gc->gs: getAllByUserId(id)
+activate gs
+gs->db: getAllByUserId(id)
+activate db
+gs<--db:Group list
+deactivate db
+gc<--gs:Group list
+deactivate gs
+activate gs
+deactivate gs
+
+
+f<--gc:<color:#green>200 OK: Joined group list</color>
+deactivate gc
+
+w<--f: Display the list of group user has joined
+deactivate f

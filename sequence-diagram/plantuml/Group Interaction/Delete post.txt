@@ -1,0 +1,62 @@
+title Delete Post
+
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application Client" as f
+control "Post Controller" as gc
+participant "Post Service" as gs
+
+database #blue:1 "Database" as db
+
+w->f:Choose three-dot button in specific post
+activate f
+w<--f:Show a list of actions with the post
+w->f:Click Delete post
+
+w<--f:Delete post confirmation popup
+w->f:Click Delete button
+
+f->gc:DELETE: /api/post/{id}
+activate gc
+gc->gc: check post's owner
+activate gc
+gc<--gc: is Post owner
+deactivate gc
+alt If Current User does not owner of the post
+f<--gc:<color:#red>403 FORBIDDEN</color>
+w<--f:Delete fail
+else 
+
+gc->gs:isExist(id)
+activate gs
+gs->db:isExist(id)
+activate db
+gs<--db:Boolean value
+deactivate db
+gc<--gs:Boolean value
+deactivate gs
+
+alt If Post does not exist
+f<--gc:<color:#red>404 NOT FOUND: not found</color>
+w<--f:Delete fail
+else
+
+gc->gs:deleteById()
+activate gs
+gs->db:deleteById()
+activate db
+gs<--db:
+deactivate db
+
+gc<--gs:
+deactivate gs
+
+f<--gc:<color:#green>200 OK</color>
+deactivate gc
+
+w<--f: Delete successfully
+deactivate f
+end
+
+
+end

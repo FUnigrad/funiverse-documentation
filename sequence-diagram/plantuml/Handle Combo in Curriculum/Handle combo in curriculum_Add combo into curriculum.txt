@@ -1,0 +1,57 @@
+title Add Combo into Curriculum
+
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "FUniverse Admin \nClient" as f
+control "Search\nController" as ss
+control "Curriculum \nController" as gc
+participant "Curriculum \nService" as gs
+participant "Combo \nService" as cs
+database #blue:1 "Database" as db
+w->f:Go to Curriculum detail page
+activate f
+w->f:Click Add Combo button
+ref over f:Here we have\nexternal process
+w<--f:Display Add Combo \ninto Curriculum popup
+w->f:Search Combo
+f->ss:GET\n/api/search?entity=combo\n&{paramToSearch}
+activate ss
+f<--ss:Combo list
+deactivate ss
+alt If there is no Combo match condition
+w<--f:No Options
+else
+w->f:Select Combo
+w<--f: Display the semester input boxes\n for the combo's syllabus
+w->f:Fill semester information\nand click Save
+f->gc:POST:/api/curriculum/{id}/combos
+activate gc
+gc->gs:get(id)
+activate gs
+gs->db: get(id)
+activate db
+gs<--db:Curriculum data
+deactivate db
+gc<--gs: Curriculum data
+deactivate gs
+gc->gc: Check Curriculum \nisEmpty()
+alt If Curriculum empty
+
+f<--gc:<color:#red>404 NOT FOUND</color>
+
+w<--f: Display screen 404 not found
+else
+gc->cs:addComboToCurriculum()
+activate cs
+cs->db:addComboToCurriculum()
+activate db
+cs<--db: Combo\ndata
+deactivate db
+gc<--cs:Combo data
+deactivate cs
+f<--gc:<color:#green>200 OK:\nCombo data
+deactivate gc
+w<--f: Display Curriculum detail page
+deactivate f
+end 
+end

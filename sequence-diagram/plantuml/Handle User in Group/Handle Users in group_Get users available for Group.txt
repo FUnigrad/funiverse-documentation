@@ -1,0 +1,27 @@
+title Get users available for Group
+
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "FUniverse Admin \nClient" as f
+control "User \nController" as gc
+participant "User \nService" as gs
+database #blue:1 "Database" as db
+w->f:Go to Users In Group page
+activate f
+w->f:Click Add Users button
+f->gc:GET: /api/user/group/none?id={id}
+activate gc
+gc->gs: getAllUserAvailable(id)
+activate gs
+
+gs->db:getAllUserAvailable(id)
+activate db
+gs<--db:User list
+deactivate db
+gc<--gs:User list
+deactivate gs
+f<--gc:User list
+deactivate gc
+w<--f:Display add Member popup
+
+deactivate f

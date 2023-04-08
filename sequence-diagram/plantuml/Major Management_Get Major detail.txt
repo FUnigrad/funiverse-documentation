@@ -1,0 +1,43 @@
+title Get Major Detail
+
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "FUniverse Admin \nClient" as f
+control "Major \nController" as gc
+participant "Major \nService" as gs
+
+database #blue:1 "Database" as db
+w->f:Go to Major list page
+activate f
+w->f:Click on Name of Major
+f->gc:GET: /api/Major/{id}
+activate gc
+gc->gs:get(id)
+activate gs
+gs->db:findById(id)
+activate db
+gs<--db:Major data
+deactivate db
+gc<--gs:Major data
+deactivate gs
+alt If Major is empty
+f<--gc:<color:#red>404 NOT FOUND</color>
+
+w<--f: Display screen 404 not found
+else If Major is present
+f->gc:GET: \n/api/major/{id}/specializations
+gc->gs:getSpecializationsInMajor(id)
+activate gs
+gs->db:getSpecializationsInMajor(id)
+activate db
+gs<--db:Specialization list \nin Major
+deactivate db
+gc<--gs:Specialization list \nin Major
+deactivate gs
+
+f<--gc:<color:#green>200 OK: \nAll data of Major,\nSpecialization List</color>
+deactivate gc
+
+w<--f: Display Major detail
+deactivate f
+end

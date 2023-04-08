@@ -1,0 +1,38 @@
+title Get User Detail
+
+
+actor #green:0.5 "Workspace Admin" as w
+participant "FUniverse Admin Client" as f
+participant "User Controller" as gc
+participant "User Service" as gs
+database #blue:1 "Database" as db
+
+w->f:Click on Name of User
+activate f
+f->gc:GET: /api/user/{id}
+activate gc
+alt If the id is not in the correct format
+f<--gc:<color:#red>400 BAD_REQUEST: Bad Request</color>
+f->f: Redirect to\nUser detail page
+w<--f: Display message This ID does not exist!
+else
+gc->gs:get(id)
+activate gs
+gs->db:findById(id)
+activate db
+gs<--db:User entity
+deactivate db
+gc<--gs:User data
+deactivate gs
+alt If no User matches id
+f<--gc:<color:#green>404 NOT FOUND</color>
+f->f: Redirect to\nUser detail page
+w<--f: Display message This ID does not exist!
+else If User matches id
+f<--gc:<color:#green>200 OK\nResponse body: User data </color>
+deactivate gc
+f->f: Redirect to\nUser detail page
+w<--f: Display User detail
+deactivate f
+end
+end

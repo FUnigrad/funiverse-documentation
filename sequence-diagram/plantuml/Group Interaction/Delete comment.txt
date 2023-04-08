@@ -1,0 +1,67 @@
+title Delete comment in Post
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application \nClient" as f
+control "Comment \nController" as gc
+participant "Post \nService" as ps
+participant "Comment \nService" as gs
+participant "Comment \nService" as gs
+
+database #blue:1 "Database" as db
+
+w->f:Delete comment in specific post
+activate f
+
+f->gc:DELETE: /api/comment/{id}
+activate gc
+gc->gc: check comment's owner
+activate gc
+gc<--gc: is comment owner
+deactivate gc
+alt If Current User does not owner of the comment
+f<--gc:<color:#red>403 FORBIDDEN</color>
+w<--f:Delete fail
+else 
+
+gc->ps: isExist(pid)
+activate ps
+ps->db: isExist(pid)
+activate db
+ps<--db:Boolean value
+deactivate db
+gc<--ps:Boolean value
+deactivate ps
+
+gc->gs: isExist(id)
+activate gs
+gs->db: isExist(id)
+activate db
+gs<--db:Boolean value
+deactivate db
+gc<--gs:Boolean value
+deactivate gs
+
+alt If Post or comment does not exist
+f<--gc:<color:#red>404 NOT FOUND: not found</color>
+w<--f:Message cannot delete comment in post
+else 
+gc->gs: deleteById(id)
+activate gs
+gs->db: deleteById(id)
+activate db
+gs<--db:
+deactivate db
+gc<--gs:
+deactivate gs
+activate gs
+deactivate gs
+
+
+f<--gc:<color:#green>200 OK</color>
+deactivate gc
+
+w<--f: Display post without deleted comment
+deactivate f
+end 
+
+end

@@ -1,0 +1,74 @@
+title Create Workspace
+
+actor #green:0.5 "System Admin" as w
+boundary "Admin Client" as f
+control "Workspace Controller" as gc
+participant "Workspace Service" as gs
+participant "App Communicate\nService" as acs
+database #blue:1 "Database" as db
+
+w->f:Go to Workspace list page
+activate f
+w->f:Click Create Workspace button
+w<--f:Display Create Workspace popup
+w->f:Type information of Workspace
+f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
+alt If the input data is wrong
+w<--f:Validate Message
+end
+w->f: Click button Save
+f->gc:POST: /api/workspace
+activate gc
+alt If there is required field do not have value
+f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
+w<--f:Message is required
+else
+activate gs
+
+gc->gs:isDomainExist(domain)
+gs->db:isDomainExist(domain)
+activate db
+gs<--db:Boolean value
+deactivate db
+gc<--gs:Boolean value
+deactivate gs
+alt If workspace's domain exist
+f<--gc:<color:#red>400 BAD_REQUEST: \n{domain} is used</color>
+w<--f:{domain} is used
+else
+gc->gs:save()
+activate gs
+gs->db:Create Workspace
+activate db
+gs<--db:Workspace data
+deactivate db
+gc<--gs:New Entity data
+deactivate gs
+
+gc->acs:saveUser()
+activate acs
+acs->db:save()
+activate db
+acs<--db:User data
+deactivate db
+gc<--acs:User data
+deactivate acs
+
+gc->acs:saveWorkspace()
+activate acs
+acs->db:save()
+activate db
+acs<--db:Workspace data
+deactivate db
+gc<--acs:Workspace data
+deactivate acs
+
+f<--gc:<color:#green>201 OK: CREATED</color>
+deactivate gc
+w<--f: Display Entity list table with new Workspace
+deactivate f
+end
+end

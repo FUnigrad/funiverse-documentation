@@ -1,0 +1,32 @@
+title Get all member in Group
+
+
+actor #green:0.5 "Workspace User" as w
+boundary "FUniverse Admin \nClient" as f
+control "Group \nController" as gc
+participant "Group Member \nService" as gs
+
+database #blue:1 "Database" as db
+
+w->f:Select tab Members in specific group
+activate f
+
+f->gc:GET: /api/group/{id}/members
+activate gc
+gc->gs: getAllUsersInGroup(id)
+activate gs
+gs->db: getAllUsersInGroup(id)
+activate db
+gs<--db:Member list
+deactivate db
+gc<--gs:Member list
+deactivate gs
+activate gs
+deactivate gs
+
+
+f<--gc:<color:#green>200 OK: Member list</color>
+deactivate gc
+
+w<--f: Display group's member list
+deactivate f

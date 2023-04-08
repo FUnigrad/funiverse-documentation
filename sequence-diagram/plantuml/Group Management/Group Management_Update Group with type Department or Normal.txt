@@ -1,0 +1,53 @@
+ title Create Group with type Department or Normal
+
+actor #green:0.5 "Workspace Admin" as w
+participant "FUniverse Admin Client" as f
+participant "Group Controller" as gc
+participant "Group Service" as gs
+database #blue:1 "Database" as db
+
+w->f:Click Edit button
+activate f
+w<--f:Display Update Group popup
+w->f:Update name of group
+f->f:Validate input data
+alt If the input data is wrong
+w<--f:Validate Message
+end
+w->f:Click Save
+f->gc:PUT: /api/group
+activate gc
+alt if Name do not have value
+f<--gc:<color:#red>BAD_REQUEST: Missing required property</color>
+w<--f:Name is required
+else
+gc->gs:isExist(id)
+activate gs
+gs->db:existsById(id)
+activate db
+gs<--db: Boolean value
+deactivate db
+gc<--gs:Boolean value
+deactivate gs
+alt If group is not exist
+f<--gc:<color:#green>404 NOT FOUND</color>
+w<--f:Close popup
+w<--f: Message Update fail
+else
+gc->gs:save()
+activate gs
+gs->db:Update Group
+activate db
+gs<--db:Group entity
+deactivate db
+gc<--gs:Group data
+deactivate gs
+f<--gc:<color:#green>200 OK</color>
+deactivate gc
+w<--f: Display Group detail
+deactivate f
+end
+end
+
+
+

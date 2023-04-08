@@ -1,0 +1,31 @@
+title Get all Comment in Post
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application Client" as f
+control "Post Controller" as gc
+participant "Comment \nService" as gs
+
+database #blue:1 "Database" as db
+
+w->f:View specific post
+activate f
+
+f->gc:GET: /api/post/{pid}/comments
+activate gc
+gc->gs: getAllCommentsInPost(pid)
+activate gs
+gs->db: getAllCommentsInPost(pid)
+activate db
+gs<--db:Comment list
+deactivate db
+gc<--gs:Comment list
+deactivate gs
+activate gs
+deactivate gs
+
+
+f<--gc:<color:#green>200 OK: Comment list</color>
+deactivate gc
+
+w<--f: Display group's post with comment list
+deactivate f

@@ -1,0 +1,35 @@
+title Create Post
+
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application Client" as f
+control "Post Controller" as gc
+participant "Post Service" as gs
+
+database #blue:1 "Database" as db
+
+w->f:Go to group's newfeed page
+activate f
+w->f:Click input write something
+
+w<--f:Create post popup
+w->f:Type content and click Post button
+
+f->gc:POST: /api/post
+activate gc
+
+gc->gs:save()
+activate gs
+gs->db:save()
+activate db
+gs<--db:Post value
+deactivate db
+
+gc<--gs:Post value
+deactivate gs
+
+f<--gc:<color:#green>201 CREATED: Post value</color>
+deactivate gc
+
+w<--f: Display group news feed with new Post
+deactivate f

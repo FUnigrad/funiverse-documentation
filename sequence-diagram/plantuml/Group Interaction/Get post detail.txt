@@ -1,0 +1,40 @@
+title Get Post detail
+
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application Client" as f
+control "Post Controller" as gc
+participant "Post Service" as gs
+
+database #blue:1 "Database" as db
+
+w->f:Choose three-dot button in specific post
+activate f
+w<--f:Show a list of actions with the post
+w->f:Click Post detail
+
+
+f->gc:Get: /api/post/{id}
+activate gc
+gc->gs:get(id)
+activate gs
+gs->db:get(id)
+activate db
+gs<--db:Post value
+deactivate db
+
+gc<--gs:Post value
+deactivate gs
+
+alt If Post is empty
+f<--gc:<color:#red>404 NOT FOUND: not found</color>
+
+w<--f: 404 Page
+else
+f<--gc:<color:#green>200 OK: Post value</color>
+deactivate gc
+
+w<--f: Display post detail page
+deactivate f
+
+end

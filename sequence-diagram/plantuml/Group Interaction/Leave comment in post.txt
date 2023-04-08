@@ -1,0 +1,49 @@
+title Leave comment in Post
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application \nClient" as f
+control "Comment \nController" as gc
+participant "Post \nService" as ps
+participant "Comment \nService" as gs
+participant "Comment \nService" as gs
+
+database #blue:1 "Database" as db
+
+w->f:Leave comment in specific post
+activate f
+
+f->gc:POST: /api/comment
+activate gc
+gc->ps: isExist(id)
+activate ps
+ps->db: isExist(id)
+activate db
+ps<--db:Boolean value
+deactivate db
+gc<--ps:Boolean value
+deactivate ps
+
+alt If Post does not exist
+f<--gc:<color:#red>404 NOT FOUND: not found</color>
+w<--f:Message cannot leave comment in post
+else 
+gc->gs: save(id)
+activate gs
+gs->db: save(id)
+activate db
+gs<--db:Comment data
+deactivate db
+gc<--gs:Comment data
+deactivate gs
+activate gs
+deactivate gs
+
+
+f<--gc:<color:#green>201 CREATED: Comment data</color>
+deactivate gc
+
+w<--f: Display post with new comment
+deactivate f
+end 
+
+

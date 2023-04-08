@@ -1,0 +1,32 @@
+title Create Normal group
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application Client" as f
+control "Group Controller" as gc
+participant "Group Service" as gs
+
+w->f:Click Create Group button
+activate f
+w<--f:Display Create Group popup
+w->f:Enter name of group
+
+w->f:Click Save
+f->gc:POST: api/group
+activate gc
+alt if Name do not have value
+f<--gc:<color:#red>400 BAD_REQUEST: Missing required property</color>
+w<--f:Name is required
+else
+gc->gs:save()
+activate gs
+gc<--gs:New Group data
+deactivate gs
+f<--gc:<color:#green>201 CREATED: Group data</color>
+deactivate gc
+w<--f: Display Group list table with new Group
+deactivate f
+end
+end
+
+
+

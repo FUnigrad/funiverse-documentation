@@ -1,0 +1,29 @@
+title Logout
+
+actor #green:0.5 "User" as w
+boundary "User's Application Client" as f
+control "Workspace Controller" as gc
+participant "Refresh Token\nService" as rts
+database #blue:1 "Database" as db
+
+w->f:Click logout button
+activate f
+f->gc:POST: /athen/logout
+activate gc
+
+
+gc->rts:deleteByAccount()
+activate rts
+
+rts->db:deleteRefreshTokens\nByUser_PersonalMail()
+activate db
+rts<--db:
+deactivate db
+
+gc<--rts:
+deactivate rts
+
+f<--gc:<color:#green>200 OK: Log out successful!</color>
+deactivate gc
+w<--f: Display Login page
+deactivate f

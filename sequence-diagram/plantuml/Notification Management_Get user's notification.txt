@@ -1,0 +1,24 @@
+ title Get all notification of user
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application Client" as f
+control "User Controller" as gc
+participant "User Service" as gs
+database #blue:1 "Database" as db
+
+w->f:Click on Notification button on navigation bar
+activate f
+f->gc: GET: api/user/{id}/events
+activate gc
+gc->gs: getAllUserEvents(id)
+activate gs
+gs->db: getAllUserEvents()
+activate db
+gs<--db: Event list
+deactivate db
+gc<--gs: Event list
+deactivate gs
+f<--gc: <color:#green>200 OK: Event list</color>
+deactivate gc
+w<--f: Display Notification list
+deactivate f

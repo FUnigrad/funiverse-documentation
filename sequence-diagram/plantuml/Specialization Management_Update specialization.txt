@@ -1,0 +1,40 @@
+title Update Specialization
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "FUniverse Admin Client" as f
+control "Specialization Controller" as gc
+participant "Specialization Service" as gs
+database #blue:1 "Database" as db
+
+w->f:Go to Major detail page
+activate f
+w->f:Click Edit icon in Specializations table
+w<--f:Display Update Specialization popup
+w->f:Type information of Specialization
+f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
+alt If the input data is wrong
+w<--f:Validate Message
+end
+w->f: Click button Save
+f->gc:PUT: /api/specialization
+activate gc
+alt If there is required field do not have value
+f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
+w<--f:Message is required
+else
+gc->gs:save()
+activate gs
+gs->db:Update Specialization
+activate db
+gs<--db:Specialization data
+deactivate db
+gc<--gs:Specialization data
+deactivate gs
+f<--gc:<color:#green>200 OK: Specialization data</color>
+deactivate gc
+w<--f: Display Major detail page with \nupdated specialization
+deactivate f
+end

@@ -1,0 +1,27 @@
+title Get Syllabus available for Curriculum
+
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "FUniverse Admin \nClient" as f
+control "Syllabus \nController" as gc
+participant "Syllabus \nService" as gs
+database #blue:1 "Database" as db
+w->f:Go to Curriculum detail page
+activate f
+w->f:Click Add Syllabus button
+f->gc:GET: /api/syllabus/curriculum/none?id={id}
+activate gc
+gc->gs: getAllSyllabusAvailable(id)
+activate gs
+
+gs->db:getAllSyllabusAvailable(id)
+activate db
+gs<--db:Syllabus list
+deactivate db
+gc<--gs:Syllabus list
+deactivate gs
+f<--gc:Syllabus list
+deactivate gc
+w<--f:Display Add Syllabus \ninto Curriculum page
+
+deactivate f

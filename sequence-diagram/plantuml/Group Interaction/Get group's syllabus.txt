@@ -1,0 +1,31 @@
+title Get Syllabus detail of Group
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application \nClient" as f
+control "Syllabus Controller" as gc
+participant "Syllabus Service" as gs
+
+database #blue:1 "Database" as db
+
+w->f:Go to group's newfeed page
+activate f
+w->f:Go to group's Syllabus tab
+f->gc:GET: /api/syllabus/{id}
+activate gc
+gc->gs: get(id)
+activate gs
+gs->db: get(id)
+activate db
+gs<--db:Syllabus value
+deactivate db
+gc<--gs:Syllabus value
+deactivate gs
+activate gs
+deactivate gs
+
+
+f<--gc:<color:#green>200 OK: Syllabus value</color>
+deactivate gc
+
+w<--f: Display group's syllabus
+deactivate f

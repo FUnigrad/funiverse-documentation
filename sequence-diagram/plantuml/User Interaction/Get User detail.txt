@@ -1,0 +1,32 @@
+title Get User information
+
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application Client" as f
+control "User Controller" as gc
+participant "User Service" as gs
+database #blue:1 "Database" as db
+
+w->f:Go to Account detail page
+activate f
+f->gc:GET: /api/user/{id}
+activate gc
+gc->gs:get(id)
+activate gs
+gs->db:findById(id)
+activate db
+gs<--db:User data
+deactivate db
+gc<--gs:User data
+deactivate gs
+alt If no User matches id
+f<--gc:<color:#green>404 NOT FOUND</color>
+
+w<--f: Display screen 404 not found
+else If User matches id
+f<--gc:<color:#green>200 OK\nResponse body: User data </color>
+deactivate gc
+
+w<--f: Display User detail
+deactivate f
+end

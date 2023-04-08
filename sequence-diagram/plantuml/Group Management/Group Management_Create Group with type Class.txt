@@ -11,20 +11,20 @@ activate f
 w<--f:Display Create Group popup
 w->f:Select Type Class
 w->f:Search Curriculum
-f->ss:GET\n/search?entity=curriculum\n+ {paramToSearch}
+f->ss:GET\n/search?entity=curriculum\n&{paramToSearch}
 activate ss
 f<--ss:Curriculum list
 deactivate ss
 alt if there is no curriculum match condition
-w<--f:No Option
+w<--f:No Options
 else
 w<--f: Curriculum options list
 
 w->f:Select Curriculum and click Save
-f->gc:POST: /group
+f->gc:POST: /api/group
 activate gc
 alt if Curriculum do not have value
-f<--gc:<color:#red>BAD_REQUEST: Missing required property</color>
+f<--gc:<color:#red>400 BAD_REQUEST: Missing required property</color>
 w<--f:Curriculum is required
 else
 gc->gs:generateNameForClass()
@@ -34,7 +34,7 @@ gc<--gs:Class's name
 gc->gs:save()
 gc<--gs:New Class data
 deactivate gs
-f<--gc:<color:#green>CREATED</color>
+f<--gc:<color:#green>200 CREATED</color>
 deactivate gc
 w<--f: Display Group list table with new Class
 deactivate f

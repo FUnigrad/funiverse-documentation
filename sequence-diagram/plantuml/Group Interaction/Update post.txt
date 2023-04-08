@@ -1,0 +1,45 @@
+title Update Post
+
+
+actor #green:0.5 "Workspace User" as w
+boundary "Application Client" as f
+control "Post Controller" as gc
+participant "Post Service" as gs
+
+database #blue:1 "Database" as db
+
+w->f:Choose three-dot button in specific post
+activate f
+w<--f:Show a list of actions with the post
+w->f:Click Update post
+
+w<--f:Update post popup
+w->f:Type content and click Post button
+
+f->gc:PUT: /api/post/{id}
+activate gc
+gc->gc: check post's owner
+activate gc
+gc<--gc: is Post owner
+deactivate gc
+alt If Current User does not owner of the post
+f<--gc:<color:#red>403 FORBIDDEN</color>
+w<--f:Update fail
+else 
+gc->gs:save()
+activate gs
+gs->db:save()
+activate db
+gs<--db:Post value
+deactivate db
+
+gc<--gs:Post value
+deactivate gs
+
+f<--gc:<color:#green>200 OK: Post value</color>
+deactivate gc
+
+w<--f: Display new post
+deactivate f
+
+end

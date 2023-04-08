@@ -1,0 +1,53 @@
+title Login
+
+actor #green:0.5 "User" as w
+boundary "Application Client" as f
+control "Workspace Controller" as gc
+participant "Authentication \nManager" as gs
+participant "Workspace\nService" as ws
+participant "JWT\nService" as acs
+participant "Refresh Token\nService" as rts
+database #blue:1 "Database" as db
+
+w->f:Go to Login page
+activate f
+w->f:Type login information
+f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
+alt If the input data is wrong
+w<--f:Validate Message
+end
+w->f: Click button Login
+f->gc:POST: /athen/login
+activate gc
+alt If there is required field do not have value
+f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
+w<--f:Message is required
+else
+
+gc->gs:authenticate(domain)
+activate gs
+gc<--gs:Authentication
+deactivate gs
+gc->ws:extractWorkspaceDomain()
+activate ws
+gc<--ws:workspaceDomain
+deactivate ws
+
+gc->acs:generateToken()
+activate acs
+gc<--acs:JWT token
+deactivate acs
+
+gc->rts:createRefreshToken()
+activate rts
+gc<--rts:Refresh token
+deactivate rts
+
+f<--gc:<color:#green>200 OK: LoginResponse</color>
+deactivate gc
+w<--f: Redirect to User's app
+deactivate f
+end

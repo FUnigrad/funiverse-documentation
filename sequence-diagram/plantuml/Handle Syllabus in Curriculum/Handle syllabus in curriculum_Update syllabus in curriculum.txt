@@ -1,0 +1,69 @@
+title Update Syllabus in Curriculum
+
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "FUniverse Admin \nClient" as f
+control "Search\nController" as ss
+control "Curriculum \nController" as gc
+participant "Curriculum \nService" as gs
+participant "Syllabus \nService" as ssv
+participant "Curriculum Plan \nService" as cps
+database #blue:1 "Database" as db
+w->f:Go to Curriculum detail page
+activate f
+w->f:Click Edit icon \nin table Curriculum Plan
+f->ss:GET\n/api/search?entity=syllabus\n&{paramToSearch}
+activate ss
+f<--ss:Syllabus data
+deactivate ss
+w<--f:Display Edit Syllabus \nin Curriculum popup
+
+w->f:Change semester \nand click Save
+f->gc:PUT:/api/curriculum/{id}/syllabus
+activate gc
+gc->gs:get(id)
+activate gs
+gs->db: get(id)
+activate db
+gs<--db:Curriculum data
+deactivate db
+gc<--gs: Curriculum data
+deactivate gs
+gc->ssv:get(id)
+activate ssv
+ssv->db: get(id)
+activate db
+ssv<--db:Syllabus data
+deactivate db
+gc<--ssv: Syllabus data
+deactivate ssv
+gc->cps:get(curriculumId, syllabusId)
+activate cps
+cps->db:get()
+activate db
+cps<--db: Curriculum Plan\ndata
+deactivate db
+gc<--cps:Curriculum Plan data
+deactivate cps
+gc->gc: Check \nCurriculum, \nSyllabus,\nCurriculum Plan \nisEmpty()
+alt If Curriculum or Syllabus or Curriculum Plan empty
+
+f<--gc:<color:#red>404 NOT FOUND</color>
+
+w<--f: Display screen 404 not found
+else
+gc->cps:save()
+activate cps
+cps->db:save()
+activate db
+cps<--db: Curriculum Plan\ndata
+deactivate db
+gc<--cps:Curriculum Plan data
+deactivate cps
+
+
+f<--gc:<color:#green>200 OK:\nCurriculum Plan data</color>
+deactivate gc
+w<--f: Display Curriculum detail page
+deactivate f
+end

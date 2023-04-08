@@ -1,0 +1,64 @@
+title Add Syllabus into Curriculum
+
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "FUniverse Admin \nClient" as f
+control "Search\nController" as ss
+control "Curriculum \nController" as gc
+participant "Curriculum \nService" as gs
+participant "Syllabus \nService" as ssv
+participant "Curriculum Plan \nService" as cps
+database #blue:1 "Database" as db
+w->f:Go to Curriculum detail page
+activate f
+w->f:Click Add Syllabus button
+ref over f:Here we have\nexternal process
+w<--f:Display Add Syllabus \ninto Curriculum popup
+w->f:Search Syllabus
+f->ss:GET\n/api/search?entity=syllabus\n&{paramToSearch}
+activate ss
+f<--ss:Syllabus list
+deactivate ss
+alt If there is no syllabus match condition
+w<--f:No Options
+else
+w->f:Select Syllabus\nFill semester information \nand click Save
+f->gc:POST:/api/curriculum/{id}/syllabus
+activate gc
+gc->gs:get(id)
+activate gs
+gs->db: get(id)
+activate db
+gs<--db:Curriculum data
+deactivate db
+gc<--gs: Curriculum data
+deactivate gs
+gc->ssv:get(id)
+activate ssv
+ssv->db: get(id)
+activate db
+ssv<--db:Syllabus data
+deactivate db
+gc<--ssv: Syllabus data
+deactivate ssv
+gc->gc: Check Curriculum, \nSyllabus \nisEmpty()
+alt If Curriculum or Syllabus empty
+
+f<--gc:<color:#red>404 NOT FOUND</color>
+
+w<--f: Display screen 404 not found
+else
+gc->cps:save()
+activate cps
+cps->db:save()
+activate db
+cps<--db: Curriculum Plan\ndata
+deactivate db
+gc<--cps:Curriculum Plan data
+deactivate cps
+f<--gc:<color:#green>200 OK:\nCurriculum Plan id</color>
+deactivate gc
+w<--f: Display Curriculum detail page
+deactivate f
+end 
+end

@@ -1,0 +1,43 @@
+title Remove Syllabus from Curriculum
+
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "FUniverse Admin \nClient" as f
+control "Curriculum Controller" as gc
+participant "Curriculum Plan \nService" as gs
+database #blue:1 "Database" as db
+w->f:Go to Curriculum detail page
+activate f
+w->f:Click delete icon in \nCurriculum Plan table
+w<--f:Remove Syllabus from \nCurriculum confirmation popup
+w->f:Click Remove button
+f->gc:DELETE:/api/curriculum/{cid}/syllabus/{sid}
+activate gc
+gc->gs:get(cid,sid)
+activate gs
+gs->db: get(cid,sid)
+activate db
+gs<--db:Curriculum Plan data
+deactivate db
+gc<--gs: Curriculum Plan data
+deactivate gs
+gc->gc: Check Curriculum Plan \nisEmpty()
+alt If Curriculum Plan empty
+
+f<--gc:<color:#red>404 NOT FOUND</color>
+
+w<--f: Display screen 404 not found
+else
+gc->gs:removeSyllabusFromCurriculum(cid,sid)
+activate gs
+gs->db:deleteById(cid,sid)
+activate db
+gs<--db:
+deactivate db
+gc<--gs:
+deactivate gs
+f<--gc:<color:#green>200 OK</color>
+deactivate gc
+w<--f: Display Curriculum detail page
+deactivate f
+end 
