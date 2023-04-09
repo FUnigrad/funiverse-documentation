@@ -1,0 +1,43 @@
+title Get Subject Detail
+
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "FUniverse Admin \nClient" as f
+control "Subject \nController" as gc
+participant "Subject \nService" as gs
+
+database #blue:1 "Database" as db
+w->f:Go to Subject list page
+activate f
+w->f:Click on Name of Subject
+f->gc:GET: /api/subject/{id}
+activate gc
+gc->gs:get(id)
+activate gs
+gs->db:findById(id)
+activate db
+gs<--db:Subject data
+deactivate db
+gc<--gs:Subject data
+deactivate gs
+alt If Subject is empty
+f<--gc:<color:#red>404 NOT FOUND</color>
+
+w<--f: Display screen 404 not found
+else If Subject is present
+f->gc:GET: \n/api/subject/{id}/syllabus
+gc->gs:getSyllabiInSubject(id)
+activate gs
+gs->db:getSyllabiInSubject(id)
+activate db
+gs<--db:Syllabus list \nin Subject
+deactivate db
+gc<--gs:Syllabus list \nin Subject
+deactivate gs
+
+f<--gc:<color:#green>200 OK: \nAll data of Subject\nSyllabus List</color>
+deactivate gc
+
+w<--f: Display Subject detail
+deactivate f
+end

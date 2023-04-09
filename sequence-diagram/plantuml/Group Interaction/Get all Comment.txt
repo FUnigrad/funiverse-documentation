@@ -3,7 +3,8 @@ title Get all Comment in Post
 actor #green:0.5 "Workspace User" as w
 boundary "Application Client" as f
 control "Post Controller" as gc
-participant "Comment \nService" as gs
+participant "Comment Service" as gs
+participant "Post Service" as ps
 
 database #blue:1 "Database" as db
 
@@ -12,6 +13,21 @@ activate f
 
 f->gc:GET: /api/post/{pid}/comments
 activate gc
+
+gc->ps:isExist(pid)
+activate ps
+ps->db:isExist(pid)
+activate db
+ps<--db:Boolean value
+deactivate db
+gc<--ps:Boolean value
+deactivate ps
+
+alt If Post does not exist
+f<--gc:<color:#red>404 NOT FOUND</color>
+w<--f: Display 404 Not Found screen
+else Else
+
 gc->gs: getAllCommentsInPost(pid)
 activate gs
 gs->db: getAllCommentsInPost(pid)
@@ -24,8 +40,9 @@ activate gs
 deactivate gs
 
 
-f<--gc:<color:#green>200 OK: Comment list</color>
+f<--gc:<color:#green>200 OK\nResponse body: Comment list</color>
 deactivate gc
 
 w<--f: Display group's post with comment list
 deactivate f
+end

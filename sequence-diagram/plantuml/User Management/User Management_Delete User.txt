@@ -1,7 +1,7 @@
 title Delete User
 
 actor #green:0.5 "Workspace Admin" as w
-participant "FUniverse Admin Client" as f
+boundary "User list page" as f
 participant "User Controller" as gc
 participant "User Service" as gs
 database #blue:1 "Database" as db
@@ -21,10 +21,9 @@ deactivate db
 gc<--gs:Boolean value
 deactivate gs
 alt If user is not exist
-f<--gc:<color:#green>404 NOT FOUND</color>
-f->f:Close popup
+f<--gc:<color:#red>404 NOT FOUND</color>
 w<--f: Message Delete fail
-else
+else Else
 gc->gs:inactivate(id)
 activate gs
 gs->db:updateIsActive(id, false)
@@ -35,11 +34,6 @@ gc<--gs:
 deactivate gs
 f<--gc:<color:#green>200 OK\nResponse body: User data </color>
 deactivate gc
-f->f:Close popup
-f->f:Update User list page
-w<--f: Message Delete User successfully
+w<--f: Display User list page \nwithout deleted User
 deactivate f
 end
-end f
-
-

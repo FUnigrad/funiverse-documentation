@@ -1,0 +1,24 @@
+ title Get all Entity in list page
+
+actor #green:0.5 "User" as w
+boundary "Client" as f
+control "Entity Controller" as gc
+participant "Entity Service" as gs
+database #blue:1 "Database" as db
+
+w->f:Go to Entity List page
+activate f
+f->gc: GET: api/{entityName}
+activate gc
+gc->gs: getAllActive()
+activate gs
+gs->db: findAllByActiveIsTrue()
+activate db
+gs<--db: Entity list
+deactivate db
+gc<--gs: Entity list
+deactivate gs
+f<--gc: <color:#green>200 OK\nResponse body: Entity list</color>
+deactivate gc
+w<--f: Display Entity list page
+deactivate f

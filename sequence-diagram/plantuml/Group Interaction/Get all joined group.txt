@@ -1,7 +1,7 @@
 title Get all Joined Group
 
 actor #green:0.5 "Workspace User" as w
-boundary "Application \nClient" as f
+boundary "Homepage" as f
 control "User \nController" as gc
 participant "Group Member \nService" as gs
 

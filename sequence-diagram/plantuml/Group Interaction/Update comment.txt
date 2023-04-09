@@ -1,11 +1,9 @@
 title Update comment in Post
 
 actor #green:0.5 "Workspace User" as w
-boundary "Application \nClient" as f
-control "Comment \nController" as gc
-participant "Post \nService" as ps
-participant "Comment \nService" as gs
-participant "Comment \nService" as gs
+boundary "Application Client" as f
+control "Comment Controller" as gc
+participant "Comment Service" as gs
 
 database #blue:1 "Database" as db
 
@@ -23,16 +21,16 @@ f<--gc:<color:#red>403 FORBIDDEN</color>
 w<--f:Update fail
 else 
 
-gc->ps: isExist(id)
-activate ps
-ps->db: isExist(id)
+gc->gs: isExist(id)
+activate gs
+gs->db: isExist(id)
 activate db
-ps<--db:Boolean value
+gs<--db:Boolean value
 deactivate db
-gc<--ps:Boolean value
-deactivate ps
+gc<--gs:Boolean value
+deactivate gs
 
-alt If Post does not exist
+alt If Comment does not exist
 f<--gc:<color:#red>404 NOT FOUND: not found</color>
 w<--f:Message cannot update comment in post
 else 
@@ -48,7 +46,7 @@ activate gs
 deactivate gs
 
 
-f<--gc:<color:#green>200 OK: Comment data</color>
+f<--gc:<color:#green>200 OK\nResponse body: Comment data</color>
 deactivate gc
 
 w<--f: Display post with updated comment

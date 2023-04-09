@@ -1,40 +1,37 @@
  title Create Group with type Department or Normal
 
-participant "Workspace Admin" as w
-participant "FUniverse Admin Client" as f
-participant "Group Controller" as gc
+actor #green:0.5 "Workspace Admin" as w
+boundary "Create Group popup" as f
+participant "Search Service" as ss
+control "Group Controller" as gc
 participant "Group Service" as gs
+database #blue:1 "Database" as db
 
-w->f:Click Create Group button
+
+w->f:Go to Create Group button
 activate f
 w<--f:Display Create Group popup
+
 w->f:Select Type Department or Normal
 w->f:Enter name of group
 
 w->f:Click Save
-f->gc:POST: /group
+f->gc:POST: /api/group
 activate gc
-alt if Name do not have value
-f<--gc:<color:#red>BAD_REQUEST: Missing required property</color>
+alt If Name do not have value
+f<--gc:<color:#red>400 BAD_REQUEST: Missing required property</color>
 w<--f:Name is required
-else
-gc->gs:isNameExist()
-activate gs
-alt if Name is already existed in system
-gc<--gs:true
-f<--gc:<color:#red>BAD_REQUEST: Name is already existed</color>
-w<--f:Name is already exist,\nplease use another name
-else
-gc<--gs:false
+else Else
 gc->gs:save()
+activate gs
+gs->db:save()
+activate db
+gs<--db:New Group data
+deactivate db
 gc<--gs:New Group data
 deactivate gs
-f<--gc:<color:#green>CREATED</color>
+f<--gc:<color:#green>201 CREATED</color>
 deactivate gc
 w<--f: Display Group list table with new Group
 deactivate f
 end
-end
-
-
-

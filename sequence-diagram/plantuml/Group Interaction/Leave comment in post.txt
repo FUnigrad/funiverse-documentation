@@ -1,11 +1,10 @@
 title Leave comment in Post
 
 actor #green:0.5 "Workspace User" as w
-boundary "Application \nClient" as f
+boundary "Application Client" as f
 control "Comment \nController" as gc
-participant "Post \nService" as ps
-participant "Comment \nService" as gs
-participant "Comment \nService" as gs
+participant "Post Service" as ps
+participant "Comment Service" as gs
 
 database #blue:1 "Database" as db
 
@@ -26,7 +25,7 @@ deactivate ps
 alt If Post does not exist
 f<--gc:<color:#red>404 NOT FOUND: not found</color>
 w<--f:Message cannot leave comment in post
-else 
+else Else
 gc->gs: save(id)
 activate gs
 gs->db: save(id)
@@ -39,7 +38,7 @@ activate gs
 deactivate gs
 
 
-f<--gc:<color:#green>201 CREATED: Comment data</color>
+f<--gc:<color:#green>201 CREATED\nResponse body: Comment data</color>
 deactivate gc
 
 w<--f: Display post with new comment

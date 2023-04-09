@@ -2,14 +2,13 @@ title Get Combo Detail
 
 
 actor #green:0.5 "Workspace Admin" as w
-boundary "FUniverse Admin \nClient" as f
-control "Combo \nController" as gc
-participant "Combo \nService" as gs
+boundary "Combo detail page" as f
+control "Combo Controller" as gc
+participant "Combo Service" as gs
 
 database #blue:1 "Database" as db
-w->f:Go to Combo list page
+w->f:Go to Combo detail page
 activate f
-w->f:Click on Name of Combo
 f->gc:GET: /api/combo/{id}
 activate gc
 gc->gs:get(id)
@@ -23,10 +22,10 @@ deactivate gs
 alt If Combo is empty
 f<--gc:<color:#red>404 NOT FOUND</color>
 
-w<--f: Display screen 404 not found
+w<--f: Display 404 Not Found screen
 else If Combo is present
 
-f<--gc:<color:#green>200 OK: \nAll data of Combo</color>
+f<--gc:<color:#green>200 OK\nResponse body:All data of Combo</color>
 deactivate gc
 
 w<--f: Display Combo detail

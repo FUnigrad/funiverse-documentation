@@ -1,7 +1,7 @@
 title Get Curriculum detail of Group
 
 actor #green:0.5 "Workspace User" as w
-boundary "Application \nClient" as f
+boundary "Group page" as f
 control "Curriculum Controller" as gc
 participant "Curriculum Service" as gs
 
@@ -9,6 +9,7 @@ database #blue:1 "Database" as db
 
 w->f:Go to group's newfeed page
 activate f
+w<--f: Group page
 w->f:Go to group's Curriculum tab
 f->gc:GET: /api/curriculum/{id}
 activate gc
@@ -16,16 +17,18 @@ gc->gs: get(id)
 activate gs
 gs->db: get(id)
 activate db
-gs<--db:Curriculum value
+gs<--db:Optional Curriculum value
 deactivate db
-gc<--gs:Curriculum value
+gc<--gs:Optional Curriculum value
 deactivate gs
-activate gs
-deactivate gs
+alt If optional value is empty
+f<--gc:<color:#red>404 NOT FOUND</color>
+w<--f: Display 404 page
 
-
+else Else
 f<--gc:<color:#green>200 OK: Curriculum value</color>
 deactivate gc
-
 w<--f: Display group's curriculum
+end
+
 deactivate f

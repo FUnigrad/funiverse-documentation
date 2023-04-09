@@ -2,13 +2,14 @@ title Add Syllabus into Combo
 
 
 actor #green:0.5 "Workspace Admin" as w
-boundary "FUniverse Admin \nClient" as f
-control "Search\nController" as ss
-control "Group \nController" as gc
-participant "Group \nService" as gs
+boundary "Combo detail page" as f
+control "Search Controller" as ss
+control "Group Controller" as gc
+participant "Group Service" as gs
 database #blue:1 "Database" as db
 w->f:Go to Combo detail page
 activate f
+w<--f: Display Combo detail page
 w->f:Click Add Syllabus button
 ref over f:Here we have\nexternal process
 w<--f:Add Syllabus into Combo popup
@@ -19,7 +20,7 @@ f<--ss:Syllabus list
 deactivate ss
 alt If there is no syllabus match condition
 w<--f:No Options
-else
+else Else
 w->f:Select Syllabus and click Save
 f->gc:PUT:/api/combo
 activate gc
@@ -32,21 +33,24 @@ deactivate db
 gc<--gs: Combo
 deactivate gs
 gc->gc: Check combo \nisEmpty()
+activate gc
+gc<--gc: Boolean value
+deactivate gc
 alt If Combo empty
 
 f<--gc:<color:#red>404 NOT FOUND</color>
 
-w<--f: Display screen 404 not found
+w<--f: Display 404 Not Found screen
 else
 gc->gs:update()
 activate gs
 gs->db:update()
 activate db
-gs<--db:
+gs<--db: New Syllabus data
 deactivate db
-gc<--gs:
+gc<--gs: New Syllabus data
 deactivate gs
-f<--gc:<color:#green>200 OK</color>
+f<--gc:<color:#green>200 OK\nResponse body: New Syllabus data</color>
 deactivate gc
 w<--f: Display Combo detail page
 deactivate f

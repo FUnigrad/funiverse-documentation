@@ -21,7 +21,7 @@ gc->gs:get(groupId)
 activate gs
 gs->db: get(groupId)
 activate db
-gs<--db:Group
+gs<--db:Group data
 deactivate db
 gc<--gs: Group data
 deactivate gs
@@ -45,11 +45,14 @@ gc<--gms: Group Member data
 deactivate gms
 
 gc->gc: Check group\nor user\nor user member \nisEmpty()
-alt If group or user empty or user member
+activate gc
+gc-->gc:result
+deactivate gc
+alt If group or user or user member empty
 f<--gc:<color:#red>404 NOT FOUND: not found</color>
 
-w<--f: Display screen 404 not found
-else
+w<--f: Display 404 Not Found screen
+else Else
 gc->gms:setGroupAdmin()
 activate gms
 gms->db:setGroupAdmin()
@@ -58,8 +61,8 @@ gms<--db: Group Member data
 deactivate db
 gc<--gms:Group Member data
 deactivate gms
-f<--gc:<color:#green>200 OK: Group Member data</color>
+f<--gc:<color:#green>200 OK\nResponse body: Group Member data</color>
 deactivate gc
-w<--f: Display Users In Group page
+w<--f: Display Users list In Group page
 deactivate f
 end 

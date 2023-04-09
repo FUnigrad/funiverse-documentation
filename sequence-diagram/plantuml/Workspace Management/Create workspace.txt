@@ -1,10 +1,10 @@
 title Create Workspace
 
 actor #green:0.5 "System Admin" as w
-boundary "Admin Client" as f
+boundary "Workspace list page" as f
 control "Workspace Controller" as gc
 participant "Workspace Service" as gs
-participant "App Communicate\nService" as acs
+participant "App Communicate Service" as acs
 database #blue:1 "Database" as db
 
 w->f:Go to Workspace list page
@@ -25,10 +25,11 @@ activate gc
 alt If there is required field do not have value
 f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
 w<--f:Message is required
-else
-activate gs
+else Else
 
 gc->gs:isDomainExist(domain)
+activate gs
+
 gs->db:isDomainExist(domain)
 activate db
 gs<--db:Boolean value
@@ -38,7 +39,7 @@ deactivate gs
 alt If workspace's domain exist
 f<--gc:<color:#red>400 BAD_REQUEST: \n{domain} is used</color>
 w<--f:{domain} is used
-else
+else Else
 gc->gs:save()
 activate gs
 gs->db:Create Workspace
@@ -68,7 +69,7 @@ deactivate acs
 
 f<--gc:<color:#green>201 OK: CREATED</color>
 deactivate gc
-w<--f: Display Entity list table with new Workspace
+w<--f: Display Entity list table \nwith new Workspace
 deactivate f
 end
 end

@@ -1,30 +1,31 @@
 title Create Group with type Course
 
-participant "Workspace Admin" as w
-participant "FUniverse Admin Client" as f
+actor #green:0.5 "Workspace Admin" as w
+boundary "Create Popup page" as f
 participant "Search Service" as ss
-participant "Group Controller" as gc
+control "Group Controller" as gc
 participant "Group Service" as gs
+database #blue:1 "Database" as db
 
-w->f:Click Create Group button
+w->f:Go to Create Group popup
 activate f
 w<--f:Display Create Group popup
-w->f:Select Type Course
+w->f:Select Group type Course
 
 w->f:Search Syllabus\nSearch Class\nSearch Teacher
-f->ss:GET\n/search?entity={entity}\n&{paramToSearch}
+f->ss:GET\n/api/search?entity={entity}\n&{paramToSearch}
 activate ss
 f<--ss:Result list
 deactivate ss
 alt if there are not data match condition
-w<--f:No Option
-else
+w<--f:No Options
+else Else
 
 w<--f: Syllabus options list
-w->f:Select Sullabus and click Save
+w->f:Select Syllabus
 
 w<--f: Class options list
-w->f:Select Class and click Save
+w->f:Select Class
 
 w<--f: Teacher options list
 w->f:Select Teacher and click Save
@@ -33,19 +34,22 @@ activate gc
 alt if there is field do not have value
 f<--gc:<color:#red>400 BAD_REQUEST: Missing required property</color>
 w<--f:Syllabus or Class or Teacher is required
-else
+else Else
 gc->gs:generateName(Course)
 activate gs
 note right of gs: Name of Course will be depend\non the Class and Syllabus
 gc<--gs:Course's name
 gc->gs:Set teacher is an admin \nof group by setAdmin()
 gc->gs:save()
+gs->db:save()
+activate db
+gs<--db:New Course data
+deactivate db
 gc<--gs:New Course data
 deactivate gs
 f<--gc:<color:#green>201 CREATED</color>
 deactivate gc
 w<--f: Display Group list table with new Course
-w<--f: Message Update successfully
 deactivate f
 end
 end f

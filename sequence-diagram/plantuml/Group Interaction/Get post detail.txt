@@ -29,9 +29,9 @@ deactivate gs
 alt If Post is empty
 f<--gc:<color:#red>404 NOT FOUND: not found</color>
 
-w<--f: 404 Page
-else
-f<--gc:<color:#green>200 OK: Post value</color>
+w<--f: Display 404 Not Found screen
+else Else
+f<--gc:<color:#green>200 OK\nResponse body: Post value</color>
 deactivate gc
 
 w<--f: Display post detail page

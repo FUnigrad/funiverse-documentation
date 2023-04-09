@@ -1,8 +1,8 @@
 title Update Curriculum
 
 actor #green:0.5 "Workspace Admin" as w
-participant "FUniverse Admin Client" as f
-participant "Curriculum Controller" as gc
+boundary "Update Curriculum popup" as f
+control "Curriculum Controller" as gc
 participant "Curriculum Service" as gs
 database #blue:1 "Database" as db
 
@@ -11,6 +11,9 @@ activate f
 w<--f:Display Update Curriculum popup
 w->f:Type information of Curriculum
 f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
 alt If the input data is wrong
 w<--f:Validate Message
 end
@@ -20,17 +23,17 @@ activate gc
 alt If there is required field do not have value
 f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
 w<--f:Message is required
-else
+else Else
 
 gc->gs:save()
 activate gs
 gs->db:Update Curriculum
 activate db
-gs<--db:Curriculum entity
+gs<--db:Curriculum data
 deactivate db
 gc<--gs:Curriculum data
 deactivate gs
-f<--gc:<color:#green>200 OK\nCurriculum data</color>
+f<--gc:<color:#green>200 OK\nResponse body:Curriculum data</color>
 deactivate gc
 w<--f: Display Curriculum detail
 deactivate f

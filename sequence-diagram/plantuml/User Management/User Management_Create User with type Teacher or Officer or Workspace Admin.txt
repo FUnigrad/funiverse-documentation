@@ -1,7 +1,7 @@
  title Create User with type Teacher or Officer or Workspace Admin
 
 actor #green:0.5 "Workspace Admin" as w
-participant "FUniverse Admin Client" as f
+boundary "Create User popup" as f
 participant "User Controller" as gc
 participant "User Service" as gs
 database #blue:1 "Database" as db
@@ -12,6 +12,9 @@ w<--f:Display Create User popup
 w->f:Select type Teacher or Officer \nor Workspace Admin
 w->f:Type information of User
 f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
 alt If the input data is wrong
 w<--f:Validate Message
 end
@@ -21,9 +24,9 @@ activate gc
 alt If there is required field do not have value
 f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
 w<--f:Message is required
-else
-activate gs
+else Else
 gc->gs:save()
+activate gs
 gs->db:Create User
 activate db
 gs<--db:User entity

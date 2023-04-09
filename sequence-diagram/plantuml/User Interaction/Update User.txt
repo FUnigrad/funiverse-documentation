@@ -23,10 +23,10 @@ deactivate db
 gc<--gs:Boolean value
 deactivate gs
 alt If no User matches id
-f<--gc:<color:#green>404 NOT FOUND</color>
+f<--gc:<color:#red>404 NOT FOUND</color>
 
-w<--f: Display screen 404 not found
-else If User matches id
+w<--f: Display 404 Not Found screen
+else Else
 gc->gs:save()
 activate gs
 gs->db:save()

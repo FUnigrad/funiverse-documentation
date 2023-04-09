@@ -1,9 +1,11 @@
 title Create Normal group
 
 actor #green:0.5 "Workspace User" as w
-boundary "Application Client" as f
+boundary "Homepage" as f
 control "Group Controller" as gc
 participant "Group Service" as gs
+database #blue:1 "Database" as db
+
 
 w->f:Click Create Group button
 activate f
@@ -19,14 +21,14 @@ w<--f:Name is required
 else
 gc->gs:save()
 activate gs
+gs->db:save()
+activate db
+gs<--db:New Group data
+deactivate db
 gc<--gs:New Group data
 deactivate gs
 f<--gc:<color:#green>201 CREATED: Group data</color>
 deactivate gc
-w<--f: Display Group list table with new Group
+w<--f: Create Group Successful
 deactivate f
 end
-end
-
-
-

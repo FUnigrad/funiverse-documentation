@@ -1,9 +1,9 @@
 title Create Curriculum
 
 actor #green:0.5 "Workspace Admin" as w
-participant "FUniverse Admin Client" as f
+boundary "Curriculum list page" as f
 participant "Search Service" as ss
-participant "Curriculum Controller" as gc
+control "Curriculum Controller" as gc
 participant "Workspace Service" as ws
 participant "Curriculum Service" as gs
 database #blue:1 "Database" as db
@@ -13,6 +13,9 @@ activate f
 w<--f:Display Create Curriculum popup
 w->f:Type information of Curriculum
 f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
 alt If the input data is wrong
 w<--f:Validate Message
 end
@@ -32,7 +35,7 @@ activate gc
 alt If there is required field do not have value
 f<--gc:<color:#red>400 BAD_REQUEST: Missing required property</color>
 w<--f:Message is required
-else
+else Else
 gc->ws:getFoundedYear()
 activate ws
 gc<--ws: foundedYear
@@ -50,13 +53,13 @@ gc->gs:save()
 activate gs
 gs->db:Create Curriculum
 activate db
-gs<--db:Curriculum entity
+gs<--db:Curriculum data
 deactivate db
 gc<--gs:New Curriculum data
 deactivate gs
 f<--gc:<color:#green>201 OK: CREATED</color>
 deactivate gc
-w<--f: Display Curriculum detail
+w<--f: Display Curriculum detail page
 deactivate f
 end
 end f

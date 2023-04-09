@@ -1,25 +1,21 @@
-title Create Entity
+ title Create Combo
 
 actor #green:0.5 "Workspace Admin" as w
-boundary "FUniverse Admin Client" as f
-control "Entity Controller" as gc
-participant "Entity Service" as gs
+participant "FUniverse Admin Client" as f
+participant "Combo Controller" as gc
+participant "Combo Service" as gs
 database #blue:1 "Database" as db
 
-w->f:Go to Entity list page
+w->f:Click Create Combo button
 activate f
-w->f:Click Create Entity button
-w<--f:Display Create Entity popup
-w->f:Type information of Entity
+w<--f:Display Create Combo popup
+w->f:Type information of Combo
 f->f:Validate input data
-activate f
-f-->f: Validate value
-deactivate f
 alt If the input data is wrong
 w<--f:Validate Message
 end
 w->f: Click button Save
-f->gc:POST: /api/{entity}
+f->gc:POST: /api/combo
 activate gc
 alt If there is required field do not have value
 f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
@@ -27,14 +23,14 @@ w<--f:Message is required
 else
 activate gs
 gc->gs:save()
-gs->db:Create Entity
+gs->db:Create Combo
 activate db
-gs<--db:Entity data
+gs<--db:Combo entity
 deactivate db
-gc<--gs:New Entity data
+gc<--gs:New Combo data
 deactivate gs
 f<--gc:<color:#green>201 OK: CREATED</color>
 deactivate gc
-w<--f: Display Entity list table with new Entity
+w<--f: Display Combo list table with new Combo
 deactivate f
 end

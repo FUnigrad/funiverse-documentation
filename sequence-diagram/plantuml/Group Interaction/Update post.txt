@@ -26,6 +26,20 @@ alt If Current User does not owner of the post
 f<--gc:<color:#red>403 FORBIDDEN</color>
 w<--f:Update fail
 else 
+
+gc->gs:isExist(id)
+activate gs
+gs->db:isExist(id)
+activate db
+gs<--db:Boolean value
+deactivate db
+gc<--gs:Boolean value
+deactivate gs
+
+alt If Post does not exist
+f<--gc:<color:#red>404 NOT FOUND</color>
+w<--f: Display 404 Not Found screen
+else Else
 gc->gs:save()
 activate gs
 gs->db:save()
@@ -36,10 +50,11 @@ deactivate db
 gc<--gs:Post value
 deactivate gs
 
-f<--gc:<color:#green>200 OK: Post value</color>
+f<--gc:<color:#green>200 OK\nResponse body: Post value</color>
 deactivate gc
 
-w<--f: Display new post
+w<--f: Display updated post
 deactivate f
 
+end
 end

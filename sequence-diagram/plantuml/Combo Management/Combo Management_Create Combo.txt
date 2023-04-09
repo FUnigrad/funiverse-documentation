@@ -1,8 +1,8 @@
  title Create Combo
 
 actor #green:0.5 "Workspace Admin" as w
-participant "FUniverse Admin Client" as f
-participant "Combo Controller" as gc
+boundary "Create Combo popup" as f
+control "Combo Controller" as gc
 participant "Combo Service" as gs
 database #blue:1 "Database" as db
 
@@ -11,6 +11,9 @@ activate f
 w<--f:Display Create Combo popup
 w->f:Type information of Combo
 f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
 alt If the input data is wrong
 w<--f:Validate Message
 end
@@ -20,12 +23,12 @@ activate gc
 alt If there is required field do not have value
 f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
 w<--f:Message is required
-else
-activate gs
+else Else
 gc->gs:save()
-gs->db:Create Combo
+activate gs
+gs->db:save()
 activate db
-gs<--db:Combo entity
+gs<--db:Combo data
 deactivate db
 gc<--gs:New Combo data
 deactivate gs

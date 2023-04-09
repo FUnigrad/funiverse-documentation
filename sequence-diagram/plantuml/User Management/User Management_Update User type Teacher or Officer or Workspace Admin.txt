@@ -1,26 +1,30 @@
 title Update User with type Teacher or Officer or Workspace Admin
 
 actor #green:0.5 "Workspace Admin" as w
-participant "FUniverse Admin Client" as f
-participant "User Controller" as gc
+boundary "Update User popup" as f
+control "User Controller" as gc
 participant "User Service" as gs
 database #blue:1 "Database" as db
 
-w->f:Click Edit button
+w->f:Go to Update User popup
 activate f
 w<--f:Display Update User popup
 w->f:Update information of User
 f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
 alt If the input data is wrong
-w<--f:Validate Message
+w<--f:Validate Message 
 end
+
 w->f:Click Save button
 f->gc:PUT: /api/user
 activate gc
 alt If there is required field do not have value
 f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
 w<--f:Message is required
-else
+else Else
 gc->gs:isExist(id)
 activate gs
 gs->db:existsById(id)
@@ -30,10 +34,9 @@ deactivate db
 gc<--gs:Boolean value
 deactivate gs
 alt If user is not exist
-f<--gc:<color:#green>404 NOT FOUND</color>
-f->f:Close popup
+f<--gc:<color:#red>404 NOT FOUND</color>
 w<--f: Message Update fail
-else
+else Else
 gc->gs:save()
 activate gs
 gs->db:Update User
@@ -44,11 +47,7 @@ gc<--gs:User entity
 deactivate gs
 f<--gc:<color:#green>200 OK\nResponse body: User data </color>
 deactivate gc
-f->f:Close popup
-f->f:Update user detail page
-w<--f: Message Update User successfully
+w<--f: Display User detail page \nwith updated information
 deactivate f
 end
 end f
-
-

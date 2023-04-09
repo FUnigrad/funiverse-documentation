@@ -2,7 +2,7 @@ title Get User information
 
 
 actor #green:0.5 "Workspace User" as w
-boundary "Application Client" as f
+boundary "Account detail page" as f
 control "User Controller" as gc
 participant "User Service" as gs
 database #blue:1 "Database" as db
@@ -20,13 +20,13 @@ deactivate db
 gc<--gs:User data
 deactivate gs
 alt If no User matches id
-f<--gc:<color:#green>404 NOT FOUND</color>
+f<--gc:<color:#red>404 NOT FOUND</color>
 
-w<--f: Display screen 404 not found
-else If User matches id
+w<--f: Display 404 Not Found screen
+else Else
 f<--gc:<color:#green>200 OK\nResponse body: User data </color>
 deactivate gc
 
-w<--f: Display User detail
+w<--f: Display User detail information
 deactivate f
 end

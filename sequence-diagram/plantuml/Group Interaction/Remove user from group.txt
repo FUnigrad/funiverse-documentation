@@ -2,9 +2,10 @@ title Remove User from Group
 
 
 actor #green:0.5 "Workspace User" as w
-boundary "Application \nClient" as f
-control "Group \nController" as gc
-participant "Group \nService" as gs
+boundary "Group page" as f
+control "Group Controller" as gc
+participant "Group Service" as gs
+participant "User Service" as us
 database #blue:1 "Database" as db
 w->f:Go to users tab page
 activate f
@@ -12,19 +13,45 @@ w->f:Click Remove icon User
 w<--f:Display Remove Member comfirmation popup
 w->f:Click remove
 f->gc:DELETE:/api/group/{gid}/user/{uid}
+
 activate gc
+gc->us:isExist(id)
+activate us
+us->db: isExist(id)
+activate db
+us<--db: Boolean value
+deactivate db
+gc<--us:Boolean value
+deactivate us
+
+gc->gs:isExist(id)
+activate gs
+gs->db: isExist(id)
+activate db
+gs<--db: Boolean value
+deactivate db
+gc<--gs:Boolean value
+deactivate gs
+
+alt If User or Group does not exist
+f<--gc:<color:#red>404 NOT FOUND</color>
+w<--f: Display 404 Not Found screen
+else Else
+
+
 gc->gs:isUserExistInGroup(id)
 activate gs
 gs->db: get(id)
 activate db
+
 gs<--db:Boolean value
 deactivate db
 gc<--gs:Boolean value
 deactivate gs
 alt If user does not exist in the group
 f<--gc:<color:#red>404 NOT FOUND</color>
-w<--f: Display screen 404 not found
-else
+w<--f: Display 404 Not Found screen
+else Else
 gc->gs:deleteUserFromGroup()
 activate gs
 gs->db:deleteUserFromGroup()
@@ -38,3 +65,4 @@ deactivate gc
 w<--f: Display users tab page
 deactivate f
 end 
+end

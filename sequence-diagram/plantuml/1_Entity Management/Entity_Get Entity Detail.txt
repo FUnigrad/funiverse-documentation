@@ -1,8 +1,8 @@
 title Get Entity Detail
 
 
-actor #green:0.5 "Workspace Admin" as w
-boundary "FUniverse Admin Client" as f
+actor #green:0.5 "User" as w
+boundary "Client" as f
 control "Entity Controller" as gc
 participant "Entity Service" as gs
 database #blue:1 "Database" as db
@@ -21,14 +21,13 @@ deactivate db
 gc<--gs:Entity data
 deactivate gs
 alt If no Entity matches id
-f<--gc:<color:#green>404 NOT FOUND</color>
+f<--gc:<color:#red>404 NOT FOUND</color>
 
-w<--f: Display screen 404 not found
-else If Entity matches id
+w<--f:Display 404 Not Found screen
+else Else
 f<--gc:<color:#green>200 OK\nResponse body: Entity data </color>
 deactivate gc
 
 w<--f: Display Entity detail
 deactivate f
-end
 end

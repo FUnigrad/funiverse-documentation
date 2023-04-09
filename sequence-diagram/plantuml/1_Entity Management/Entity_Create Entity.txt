@@ -1,0 +1,40 @@
+title Create Entity
+
+actor #green:0.5 "User" as w
+boundary "Client" as f
+control "Entity Controller" as gc
+participant "Entity Service" as gs
+database #blue:1 "Database" as db
+
+w->f:Go to Entity list page
+activate f
+w->f:Click Create Entity button
+w<--f:Display Create Entity popup
+w->f:Type information of Entity
+f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
+alt If the input data is wrong
+w<--f:Validate Message
+end
+w->f: Click button Save
+f->gc:POST: /api/{entity}
+activate gc
+alt If there is required field do not have value
+f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
+w<--f:Message is required
+else
+gc->gs:save()
+activate gs
+gs->db:Create Entity
+activate db
+gs<--db:Entity data
+deactivate db
+gc<--gs:New Entity data
+deactivate gs
+f<--gc:<color:#green>201 OK: CREATED</color>
+deactivate gc
+w<--f: Display Entity list table with new Entity
+deactivate f
+end

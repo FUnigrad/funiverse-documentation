@@ -2,21 +2,23 @@ title Get all User in Group
 
 
 actor #green:0.5 "Workspace Admin" as w
-participant "FUniverse Admin \nClient" as f
-participant "Group \nController" as gc
-participant "Group \nService" as gs
+boundary "Group's User page" as f
+control "Group Controller" as gc
+participant "Group Service" as gs
 
 database #blue:1 "Database" as db
 
-w->f:Click Groups \nin navigation bar 
+w->f: Go to Group's User page
 activate f
 
-w<--f:Group list page
-w->f:Click icon Add User
 f->gc:GET: /api/group/{id}/users
 activate gc
 gc->gs: isExist(id)
 activate gs
+gs->db:existsById(id)
+activate db
+gs<--db: Boolean value
+deactivate db
 gc<--gs:Boolean value
 deactivate gs
 
@@ -24,8 +26,8 @@ alt If group does not exist
 
 f<--gc:<color:#red>404 NOT FOUND</color>
 
-w<--f: Display screen 404 not found
-else
+w<--f: Display 404 Not Found screen
+else Else
 gc->gs:getAllUsersInGroup(id)
 activate gs
 gs->db:getAllUsersInGroup(id)
@@ -36,7 +38,7 @@ gc<--gs:User list
 deactivate gs
 
 
-f<--gc:<color:#green>200 OK</color>
+f<--gc:<color:#green>200 OK\nResponse body: User list</color>
 deactivate gc
 
 w<--f: Display the list of group Users

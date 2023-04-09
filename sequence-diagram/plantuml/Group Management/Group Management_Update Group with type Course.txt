@@ -1,34 +1,34 @@
 title Update Group with type Course
 
 actor #green:0.5 "Workspace Admin" as w
-participant "FUniverse Admin Client" as f
+boundary "Update Group popup" as f
 participant "Search Service" as ss
-participant "Group Controller" as gc
+control "Group Controller" as gc
 participant "Group Service" as gs
 database #blue:1 "Database" as db
 
-w->f:Click Edit button
+w->f:Go to Update Group popup
 activate f
 w<--f:Display Update Group popup
 
 w->f:Search Teacher
-f->ss:GET\n/search?entity=user\n&{paramToSearch}
+f->ss:GET\n/api/search?entity=user\n&{paramToSearch}
 activate ss
 f<--ss:Result list
 deactivate ss
-alt if there are not data match condition
+alt If there are not data match condition
 w<--f:No Options
-else
+else Else
 
 
 w<--f: Teacher options list
 w->f:Select Teacher and click Save
 f->gc:PUT: /api/group
 activate gc
-alt if there is field do not have value
+alt If there is field do not have value
 f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
 w<--f:Required message
-else
+else Else
 gc->gs:isExist(id)
 activate gs
 gs->db:existsById(id)
@@ -38,7 +38,7 @@ deactivate db
 gc<--gs:Boolean value
 deactivate gs
 alt If group is not exist
-f<--gc:<color:#green>404 NOT FOUND</color>
+f<--gc:<color:#red>404 NOT FOUND</color>
 w<--f:Close popup
 w<--f: Message Update fail
 else
@@ -47,17 +47,14 @@ activate gs
 gc->gs:save()
 gs->db:Update Group
 activate db
-gs<--db:Group entity
+gs<--db: Updated Group data
 deactivate db
-gc<--gs:New Course data
+gc<--gs:Updated Group data
 deactivate gs
-f<--gc:<color:#green>200 OK</color>
+f<--gc:<color:#green>200 OK\nResponse body: Group data </color>
 deactivate gc
-w<--f: Display Group detail
-w<--f: Message Update successfully
+w<--f: Display Group detail page \nwith updated value
 deactivate f
 end
 end
 end f
-
-

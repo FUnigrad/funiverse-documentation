@@ -25,7 +25,7 @@ activate gc
 alt If there is required field do not have value
 f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
 w<--f:Message is required
-else
+else Else
 
 gc->gs:authenticate(domain)
 activate gs

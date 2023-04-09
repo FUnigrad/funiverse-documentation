@@ -1,17 +1,16 @@
-title Deactive Entity
+title Delete User
 
 actor #green:0.5 "Workspace Admin" as w
 participant "FUniverse Admin Client" as f
-participant "Entity Controller" as gc
-participant "Entity Service" as gs
+participant "User Controller" as gc
+participant "User Service" as gs
 database #blue:1 "Database" as db
 
-w->f:Go to Entity list page
-activate f
 w->f:Click Delete button
-w<--f:Display delete Entity \nconfirmation popup
+activate f
+w<--f:Display delete User \nconfirmation popup
 w->f:Click Deactive button
-f->gc:DELETE: /api/{entity}/{id}
+f->gc:DELETE: /api/user/{id}
 activate gc
 gc->gs:isExist(id)
 activate gs
@@ -21,8 +20,9 @@ gs<--db: Boolean value
 deactivate db
 gc<--gs:Boolean value
 deactivate gs
-alt If Entity is not exist
+alt If user is not exist
 f<--gc:<color:#green>404 NOT FOUND</color>
+f->f:Close popup
 w<--f: Message Delete fail
 else
 gc->gs:inactivate(id)
@@ -33,11 +33,13 @@ gs<--db:
 deactivate db
 gc<--gs:
 deactivate gs
-f<--gc:<color:#green>200 OK\nResponse body: Entity data </color>
+f<--gc:<color:#green>200 OK\nResponse body: User data </color>
 deactivate gc
-w<--f: Message Delete Entity successfully
-w<--f: Display Entity list page
+f->f:Close popup
+f->f:Update User list page
+w<--f: Message Delete User successfully
 deactivate f
 end
+end f
 
 

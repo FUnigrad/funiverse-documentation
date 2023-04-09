@@ -1,0 +1,33 @@
+title Get Entity Detail
+
+
+actor #green:0.5 "User" as w
+boundary "Client" as f
+control "Entity Controller" as gc
+participant "Entity Service" as gs
+database #blue:1 "Database" as db
+
+w->f:Go to Entity list page
+activate f
+w->f:Click on Name of Entity
+f->gc:GET: /api/{entity}/{id}
+activate gc
+gc->gs:get(id)
+activate gs
+gs->db:findById(id)
+activate db
+gs<--db:Entity data
+deactivate db
+gc<--gs:Entity data
+deactivate gs
+alt If no Entity matches id
+f<--gc:<color:#red>404 NOT FOUND</color>
+
+w<--f:Display 404 Not Found screen
+else Else
+f<--gc:<color:#green>200 OK\nResponse body: Entity data </color>
+deactivate gc
+
+w<--f: Display Entity detail
+deactivate f
+end

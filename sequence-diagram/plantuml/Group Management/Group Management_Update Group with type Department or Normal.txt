@@ -1,16 +1,20 @@
  title Create Group with type Department or Normal
 
 actor #green:0.5 "Workspace Admin" as w
-participant "FUniverse Admin Client" as f
-participant "Group Controller" as gc
+boundary "Update Group popup" as f
+control "Group Controller" as gc
 participant "Group Service" as gs
 database #blue:1 "Database" as db
 
-w->f:Click Edit button
+w->f:Go to Update Group popup
 activate f
 w<--f:Display Update Group popup
+
 w->f:Update name of group
 f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
 alt If the input data is wrong
 w<--f:Validate Message
 end
@@ -18,9 +22,9 @@ w->f:Click Save
 f->gc:PUT: /api/group
 activate gc
 alt if Name do not have value
-f<--gc:<color:#red>BAD_REQUEST: Missing required property</color>
+f<--gc:<color:#red>400 BAD_REQUEST: Missing required property</color>
 w<--f:Name is required
-else
+else Else
 gc->gs:isExist(id)
 activate gs
 gs->db:existsById(id)
@@ -30,10 +34,10 @@ deactivate db
 gc<--gs:Boolean value
 deactivate gs
 alt If group is not exist
-f<--gc:<color:#green>404 NOT FOUND</color>
+f<--gc:<color:#red>404 NOT FOUND</color>
 w<--f:Close popup
 w<--f: Message Update fail
-else
+else Else
 gc->gs:save()
 activate gs
 gs->db:Update Group
@@ -42,7 +46,7 @@ gs<--db:Group entity
 deactivate db
 gc<--gs:Group data
 deactivate gs
-f<--gc:<color:#green>200 OK</color>
+f<--gc:<color:#green>200 OK\nResponse body: Group data</color>
 deactivate gc
 w<--f: Display Group detail
 deactivate f
