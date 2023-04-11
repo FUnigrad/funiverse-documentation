@@ -2,9 +2,9 @@ title Get Syllabus available for Curriculum
 
 
 actor #green:0.5 "Workspace Admin" as w
-boundary "FUniverse Admin \nClient" as f
-control "Syllabus \nController" as gc
-participant "Syllabus \nService" as gs
+boundary "FUniverse Admin Client" as f
+control "Syllabus Controller" as gc
+participant "Syllabus Service" as gs
 database #blue:1 "Database" as db
 w->f:Go to Curriculum detail page
 activate f
@@ -20,7 +20,7 @@ gs<--db:Syllabus list
 deactivate db
 gc<--gs:Syllabus list
 deactivate gs
-f<--gc:Syllabus list
+f<--gc:<color:#green>200 OK\nResponse body: Syllabus list</color>
 deactivate gc
 w<--f:Display Add Syllabus \ninto Curriculum page
 

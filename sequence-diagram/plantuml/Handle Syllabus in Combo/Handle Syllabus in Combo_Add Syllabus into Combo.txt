@@ -2,10 +2,10 @@ title Add Syllabus into Combo
 
 
 actor #green:0.5 "Workspace Admin" as w
-boundary "Combo detail page" as f
+boundary "FUniverse Admin Client" as f
 control "Search Controller" as ss
-control "Group Controller" as gc
-participant "Group Service" as gs
+control "Combo Controller" as gc
+participant "Combo Service" as gs
 database #blue:1 "Database" as db
 w->f:Go to Combo detail page
 activate f
@@ -46,14 +46,13 @@ gc->gs:update()
 activate gs
 gs->db:update()
 activate db
-gs<--db: New Syllabus data
+gs<--db: New Combo data
 deactivate db
-gc<--gs: New Syllabus data
+gc<--gs: New Combo data
 deactivate gs
-f<--gc:<color:#green>200 OK\nResponse body: New Syllabus data</color>
+f<--gc:<color:#green>200 OK\nResponse body: New Combo data</color>
 deactivate gc
 w<--f: Display Combo detail page
 deactivate f
 end 
-deactivate f
 end

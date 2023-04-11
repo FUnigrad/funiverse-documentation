@@ -23,8 +23,8 @@ deactivate gs
 alt If Subject is empty
 f<--gc:<color:#red>404 NOT FOUND</color>
 
-w<--f: Display screen 404 not found
-else If Subject is present
+w<--f:Display 404 Not Found screen
+else Else
 f->gc:GET: \n/api/subject/{id}/syllabus
 gc->gs:getSyllabiInSubject(id)
 activate gs
@@ -35,7 +35,7 @@ deactivate db
 gc<--gs:Syllabus list \nin Subject
 deactivate gs
 
-f<--gc:<color:#green>200 OK: \nAll data of Subject\nSyllabus List</color>
+f<--gc:<color:#green>200 OK Response body:\nAll data of Subject\nand Syllabus List</color>
 deactivate gc
 
 w<--f: Display Subject detail

@@ -8,10 +8,14 @@ participant "Syllabus Service" as gs
 database #blue:1 "Database" as db
 w->f:Go to Syllabus detail page
 activate f
+w<--f:Display Syllabus list page
 w->f:Click Update Syllabus button
 w<--f:Display Update Syllabus popup
 w->f:Type information of Syllabus
 f->f:Validate input data
+activate f
+f-->f:Validate value
+deactivate f
 alt If the input data is wrong
 w<--f:Validate Message
 end
@@ -22,7 +26,7 @@ f<--ss:subject list
 deactivate ss
 alt If there is no subject match with condition
 w<--f:No Options
-else
+else Else
 w<--f: Subject options list
 w->f:Select Subject and click Save
 f->gc:PUT: /api/syllabus
@@ -36,11 +40,11 @@ gc->gs:save()
 activate gs
 gs->db:Update Syllabus
 activate db
-gs<--db:Syllabus entity
+gs<--db:Syllabus data
 deactivate db
 gc<--gs:Syllabus data
 deactivate gs
-f<--gc:<color:#green>200 OK: Syllabus data</color>
+f<--gc:<color:#green>200 OK\nResponse body: Syllabus data</color>
 deactivate gc
 w<--f:Display Syllabus detail page
 deactivate f

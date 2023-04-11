@@ -20,7 +20,7 @@ gs<--db:Combo list
 deactivate db
 gc<--gs:Combo list
 deactivate gs
-f<--gc:Combo list
+f<--gc:<color:#green>200 OK\nResponse body: Combo list</color>
 deactivate gc
 w<--f:Display Add Combo \ninto Curriculum popup
 

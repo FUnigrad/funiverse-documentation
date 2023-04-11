@@ -46,11 +46,14 @@ deactivate db
 gc<--cps:Curriculum Plan data
 deactivate cps
 gc->gc: Check \nCurriculum, \nSyllabus,\nCurriculum Plan \nisEmpty()
+activate gc
+gc<--gc: Boolean value
+deactivate gc
 alt If Curriculum or Syllabus or Curriculum Plan empty
 
 f<--gc:<color:#red>404 NOT FOUND</color>
 
-w<--f: Display screen 404 not found
+w<--f: Display 404 Not Found screen
 else
 gc->cps:save()
 activate cps
@@ -62,7 +65,7 @@ gc<--cps:Curriculum Plan data
 deactivate cps
 
 
-f<--gc:<color:#green>200 OK:\nCurriculum Plan data</color>
+f<--gc:<color:#green>200 OK\nResponse body:Curriculum Plan data</color>
 deactivate gc
 w<--f: Display Curriculum detail page
 deactivate f

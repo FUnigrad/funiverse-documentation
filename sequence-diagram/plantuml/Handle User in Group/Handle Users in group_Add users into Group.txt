@@ -5,7 +5,7 @@ actor #green:0.5 "Workspace Admin" as w
 boundary "FUniverse Admin \nClient" as f
 control "Search\nController" as ss
 control "Group \nController" as gc
-participant "Group \nService" as gs
+participant "Group Service" as gs
 database #blue:1 "Database" as db
 w->f:Go to Users In Group page
 activate f
@@ -19,7 +19,7 @@ f<--ss:User list
 deactivate ss
 alt If there is no user match condition
 w<--f:No Options
-else
+else Else
 w->f:Select Users and click Add
 f->gc:POST:/api/group/{id}/users
 activate gc
@@ -27,16 +27,19 @@ gc->gs:get(id)
 activate gs
 gs->db: get(id)
 activate db
-gs<--db:Group
+gs<--db:Group data
 deactivate db
 gc<--gs: Group data
 deactivate gs
 gc->gc: Check group \nisEmpty()
+activate gc
+gc<--gc: Boolean value
+deactivate gc
 alt If group empty
 
 f<--gc:<color:#red>404 NOT FOUND</color>
 
-w<--f: Display screen 404 not found
+w<--f: Display 404 Not Found screen
 else
 gc->gs:addMemberToGroup()
 activate gs

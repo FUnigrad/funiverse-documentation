@@ -4,23 +4,26 @@ title Remove Combo from Curriculum
 actor #green:0.5 "Workspace Admin" as w
 boundary "FUniverse Admin \nClient" as f
 control "Curriculum Controller" as gc
-participant "Curriculum \nService" as gs
+participant "Curriculum Service" as gs
 database #blue:1 "Database" as db
 w->f:Go to Curriculum detail page
 activate f
+w<--f:Display Curriculum detail page
+
 w->f:Click delete icon in \nCombos table
 w<--f:Remove Combo from \nCurriculum confirmation popup
 w->f:Click Remove button
 f->gc:DELETE:/api/curriculum/{id}/combo/{cid}
 activate gc
-gc->gs:get(id)
+gc->gs:get(cid)
 activate gs
-gs->db: get(id)
+gs->db: get(cid)
 activate db
 gs<--db:Curriculum data
 deactivate db
 gc<--gs: Curriculum data
 deactivate gs
+
 gc->gc: Check Curriculum \nisEmpty()
 alt If Curriculum empty
 
@@ -32,11 +35,11 @@ gc->gs:removeComboFromCurriculum()
 activate gs
 gs->db:update()
 activate db
-gs<--db:Curriculum value
+gs<--db:Curriculum data
 deactivate db
-gc<--gs:
+gc<--gs:Curriculum data
 deactivate gs
-f<--gc:<color:#green>200 OK</color>
+f<--gc:<color:#green>200 OK\nResponse body: Curriculum data</color>
 deactivate gc
 w<--f: Display Curriculum detail page
 deactivate f

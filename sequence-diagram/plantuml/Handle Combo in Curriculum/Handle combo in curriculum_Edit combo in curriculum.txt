@@ -3,13 +3,14 @@ title Edit Combo in Curriculum
 
 actor #green:0.5 "Workspace Admin" as w
 boundary "FUniverse Admin \nClient" as f
-control "Search\nController" as ss
-control "Curriculum \nController" as gc
-participant "Curriculum \nService" as gs
-participant "Combo \nService" as cs
+control "Search Controller" as ss
+control "Curriculum Controller" as gc
+participant "Curriculum Service" as gs
+participant "Combo Service" as cs
 database #blue:1 "Database" as db
 w->f:Go to Curriculum detail page
 activate f
+w<--f:Display Curriculum detail page
 w->f:Click Edit icon in Combos table
 f->ss:GET\n/api/search?entity=combo\n&{paramToSearch}
 activate ss
@@ -28,11 +29,14 @@ deactivate db
 gc<--gs: Curriculum data
 deactivate gs
 gc->gc: Check Curriculum \nisEmpty()
+activate gc
+gc<--gc: Boolean value
+deactivate gc
 alt If Curriculum empty
 
 f<--gc:<color:#red>404 NOT FOUND</color>
 
-w<--f: Display screen 404 not found
+w<--f: Display 404 Not Found screen
 else
 gc->cs:update()
 activate cs
@@ -42,9 +46,8 @@ cs<--db: Combo\ndata
 deactivate db
 gc<--cs:Combo data
 deactivate cs
-f<--gc:<color:#green>200 OK:\nCombo data
+f<--gc:<color:#green>200 OK\nResponse body:Combo data
 deactivate gc
 w<--f: Display Curriculum detail page
 deactivate f
 end 
-end

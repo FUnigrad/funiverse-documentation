@@ -1,0 +1,56 @@
+title Create Specialization
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "FUniverse Admin Client" as f
+control "Specialization Controller" as gc
+participant "Major Service" as ms
+participant "Specialization Service" as gs
+database #blue:1 "Database" as db
+
+w->f:Go to Major detail page
+activate f
+w->f:Click Edit icon in Specializations table
+w<--f:Display Update Specialization popup
+w->f:Type information of Specialization
+f->f:Validate input data
+activate f
+f-->f: Validate value
+deactivate f
+alt If the input data is wrong
+w<--f:Validate Message
+end
+w->f: Click button Save
+f->gc:POST: /api/specialization
+activate gc
+alt If there is required field do not have value
+f<--gc:<color:#red>400 BAD_REQUEST: \nMissing required property</color>
+w<--f:Message is required
+else Else
+
+gc->ms:isExist(majorID)
+activate ms
+ms->db:existsById(majorID)
+activate db
+ms<--db:Boolean value
+deactivate db
+gc<--ms:Boolean value
+deactivate ms
+alt If Major is empty
+f<--gc:<color:#red>404 NOT FOUND</color>
+w<--f:Display 404 Not Found screen
+else Else
+
+gc->gs:save()
+activate gs
+gs->db:Update Specialization
+activate db
+gs<--db:Specialization data
+deactivate db
+gc<--gs:Specialization data
+deactivate gs
+f<--gc:<color:#green>200 OK\nResponse body: Specialization data</color>
+deactivate gc
+w<--f: Display Major detail page with \nupdated specialization
+deactivate f
+end
+end
