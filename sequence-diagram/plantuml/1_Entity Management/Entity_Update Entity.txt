@@ -33,7 +33,7 @@ gs<--db:Entity data
 deactivate db
 gc<--gs:Entity data
 deactivate gs
-f<--gc:<color:#green>200 OK: Entity data</color>
+f<--gc:<color:#green>200 OK\nResponse body: Entity data</color>
 deactivate gc
 w<--f: Display Entity detail page
 deactivate f

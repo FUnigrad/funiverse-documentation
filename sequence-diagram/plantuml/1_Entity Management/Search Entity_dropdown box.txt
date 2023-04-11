@@ -31,7 +31,7 @@ es<--db:Entity list
 deactivate db
 sc<--es:Entity list
 deactivate es
-f<--sc: <color:#green>200 OK: Entity list</color>
+f<--sc: <color:#green>200 OK\nResponse body: Entity list</color>
 
 alt If Entity list is null
 w<--f:No Options
