@@ -2,9 +2,9 @@ title Get users available for Group
 
 
 actor #green:0.5 "Workspace Admin" as w
-boundary "FUniverse Admin \nClient" as f
-control "User \nController" as gc
-participant "User \nService" as gs
+boundary "FUniverse Admin Client" as f
+control "User Controller" as gc
+participant "User Service" as gs
 database #blue:1 "Database" as db
 w->f:Go to Users In Group page
 activate f
@@ -20,7 +20,7 @@ gs<--db:User list
 deactivate db
 gc<--gs:User list
 deactivate gs
-f<--gc:User list
+f<--gc: <color:#green>200 OK\nResponse body: User list</color>
 deactivate gc
 w<--f:Display add Member popup
 
