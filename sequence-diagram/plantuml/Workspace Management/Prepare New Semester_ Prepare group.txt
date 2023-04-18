@@ -1,0 +1,39 @@
+title Prepare new semester - Prepare group
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "Workspace Admin Client" as f
+control "Group Controller" as gc
+participant "Group Service" as gs
+database #blue:1 "Database" as db
+
+w->f: Click to Prepare New Semester button
+activate f
+
+f->gc:GET: /api/group/prepare-group
+activate gc
+gc->gs: getSyllabiOfCurrentTerm()
+activate gs
+gs->db:getSyllabiOfCurrentTerm()
+activate db
+gs<--db: Syllabus list
+deactivate db
+gc<--gs:Syllabus list
+deactivate gs
+
+gc->gc:prepareGroupInTerm()
+activate gc
+gc<--gc: Group list
+deactivate gc
+
+gc->gs:save(List<Group>)
+activate gs
+gs->db:save(group)
+activate db
+gs<--db:Group list
+deactivate db
+gc<--gs:Group list
+deactivate gs
+
+f<--gc:<color:#green>200 OK\nResponse body: Group list in new semester</color>
+deactivate gc
+w<--f:Display the list of group Course

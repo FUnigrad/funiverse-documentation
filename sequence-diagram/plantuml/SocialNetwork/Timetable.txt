@@ -1,0 +1,74 @@
+title Get Timetable
+
+
+actor #green:0.5 "User" as w
+boundary "Timetable page" as f
+control "User Controller" as gc
+participant "Group Service" as grs
+participant "Curriculum Plan\nService" as cps
+participant "Entity Service" as gs
+database #blue:1 "Database" as db
+
+w->f:Go to Timetable page
+activate f
+f->gc:GET: /api/user/timetable
+activate gc
+gc->gc: Check user\nis admin
+activate gc
+gc-->gc:Boolean value
+deactivate gc
+
+alt If User is admin
+f<--gc:<color:#red>403 Access denied:\nAdmin cannot perform this request</color>
+w<--f:Admin cannot perform this request 
+else Else
+
+In progress HERE!!
+gc->grs:getClassByStudentId(id)
+activate grs
+grs->db:getClassByStudentId(id)
+activate db
+grs<--db:Class data
+deactivate db
+gc<--grs:Class data
+deactivate grs
+
+gc->gc: Get Curriculum\nof current User
+activate gc
+gc-->gc: Curriculum data
+deactivate gc
+gc->cps:getAllSyllabusByCurriculumIdAndSemester\n(curriculum.Id, curriculum.currentSemester)
+activate cps
+cps->db:getAllSyllabusByCurriculumIdAndSemester\n(curriculum.Id, curriculum.currentSemester)
+activate db
+cps<--db:Syllabus list
+deactivate db
+gc<--cps:Syllabus list
+deactivate cps
+
+loop
+gc->gc: 
+end 
+
+
+gc->gs:get(id)
+activate gs
+gs->db:findById(id)
+activate db
+gs<--db:Entity data
+deactivate db
+gc<--gs:Entity data
+deactivate gs
+
+alt If no Entity matches id
+f<--gc:<color:#red>404 NOT FOUND</color>
+
+w<--f:Display 404 Not Found screen
+else Else
+f<--gc:<color:#green>200 OK\nResponse body: Entity data </color>
+deactivate gc
+
+w<--f: Display Entity detail
+deactivate f
+end
+end

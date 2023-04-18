@@ -1,0 +1,44 @@
+title Get User Timetable
+
+actor #green:0.5 "Workspace User" as w
+boundary "Workspace User Client" as f
+control "User Controller" as gc
+participant "User Service" as gs
+database #blue:1 "Database" as db
+
+w->f: Click to Timetable button
+activate f
+
+f->gc:GET: /api/user/timetable
+activate gc
+
+gc->gc:getOrCreateTimetableEvent()
+activate gc
+gc->gs:getTimetableEvents(user)
+activate gs
+gs->db:getTimetableEvents(user)
+activate db
+gs<--db:Optional Timetable Events
+deactivate db
+gc<--gs:Optional Timetable Events
+deactivate gs
+
+alt If Optional value is empty
+gc->gs:createTimetable(user)
+activate gs
+gs->db:save(timetable)
+activate db
+gs<--db:Timetable Event list
+deactivate db
+gc<--gs:Timetable Event list
+deactivate gs
+end 
+gc<--gc: Timetable Event list
+deactivate gc
+
+
+f<--gc:<color:#green>200 OK\nResponse body: Timetable Event list</color>
+deactivate gc
+w<--f:Display timetable
+
+deactivate f

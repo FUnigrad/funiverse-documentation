@@ -1,0 +1,31 @@
+title Prepare new semester - Assign teacher
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "Workspace Admin Client" as f
+control "Group Controller" as gc
+participant "Group Service" as gs
+database #blue:1 "Database" as db
+
+activate f
+w->f:Click Next button
+w->f:Set teacher for groups
+f->gc:POST: /api/group/assign-teacher
+activate gc
+gc->gc:setTeacherForGroup()
+activate gc
+gc<--gc:updated groups
+deactivate gc
+
+gc->gs:save(List<Group>)
+activate gs
+gs->db:save(group)
+activate db
+gs<--db:Group list
+deactivate db
+gc<--gs:Group list
+deactivate gs
+
+f<--gc:<color:#green>200 OK\nResponse body: Group list after updater</color>
+deactivate gc
+w<--f:Display the list of group Course
+

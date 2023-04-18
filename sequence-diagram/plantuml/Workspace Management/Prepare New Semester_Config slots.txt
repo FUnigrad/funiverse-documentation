@@ -1,0 +1,49 @@
+ title Prepare new semester - Config slots
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "Workspace Admin Client" as f
+control "Group Controller" as gc
+participant "Group Service" as gs
+database #blue:1 "Database" as db
+
+activate f
+
+w->f:Click Next button
+w->f:Config slot for groups
+f->gc:POST: /api/group/slot/bulk-create
+activate gc
+gc->gc:validateInput()
+activate gc
+gc<--gc:error message
+deactivate gc
+
+alt If error message is not empty
+f<--gc:<color:#red>400 BAD REQUEST\nResponse body: Error message</color>
+w<--f:Display error message
+else Else
+gc->gc:createSlotsForGroup() \nupdateTermState()
+activate gc
+
+gc->gs:save()
+activate gs
+gs->db:save()
+activate db
+gs<--db:true
+deactivate db
+gc<--gs:true
+deactivate gs
+
+gc<--gc:
+deactivate gc
+
+
+
+f<--gc:<color:#green>200 OK</color>
+deactivate gc
+w<--f:Display Admin Home page
+deactivate f
+
+end 
+
+
+deactivate f

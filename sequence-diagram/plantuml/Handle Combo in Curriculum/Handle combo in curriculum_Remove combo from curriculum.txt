@@ -25,6 +25,9 @@ gc<--gs: Curriculum data
 deactivate gs
 
 gc->gc: Check Curriculum \nisEmpty()
+activate gc
+gc-->gc:Boolean value
+deactivate gc
 alt If Curriculum empty
 
 f<--gc:<color:#red>404 NOT FOUND</color>

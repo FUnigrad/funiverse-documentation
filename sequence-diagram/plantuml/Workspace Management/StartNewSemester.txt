@@ -1,0 +1,45 @@
+title Start new semester
+
+actor #green:0.5 "Workspace Admin" as w
+boundary "Workspace Admin Client" as f
+control "Term Controller" as gc
+participant "Term Service" as gs
+database #blue:1 "Database" as db
+
+w->f: Click to Start new semester button
+activate f
+
+f->gc:GET: /api/term/start-new
+activate gc
+
+gc->gs:getCurrentTerm()
+activate gs
+gs->db:getCurrentTerm(term)
+activate db
+gs<--db:Current Term
+deactivate db
+gc<--gs:Current Term
+deactivate gs
+
+gc->gc:getTermState()
+activate gc
+gc<--gc:Term State
+deactivate gc
+alt If Term is not Ready
+f<--gc:<color:#red>400 BAD REQUEST</color>
+w<--f:Display message:\nTerm is not ready to start
+else Else
+gc->gs:updateState(term)
+activate gs
+gs->db:updateState(term)
+activate db
+gs<--db:Term data
+deactivate db
+gc<--gs:Term data
+deactivate gs
+f<--gc:<color:#green>200 OK\nResponse body: New Term</color>
+deactivate gc
+w<--f:Display new Term information
+deactivate f
+end 
+deactivate f

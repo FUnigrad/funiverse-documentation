@@ -1,4 +1,4 @@
-title Deactive Entity
+title Deactivate Entity
 
 actor #green:0.5 "User" as w
 boundary "Client" as f

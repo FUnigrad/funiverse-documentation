@@ -32,16 +32,15 @@ deactivate db
 sc<--es:Entity list
 deactivate es
 f<--sc: <color:#green>200 OK\nResponse body: Entity list</color>
+deactivate sc
 
 alt If Entity list is null
 w<--f:No Options
 else
 w<--f: Entity options list
+deactivate f
+
 end
 
- 
-deactivate sc
-
-deactivate f
 end
 
