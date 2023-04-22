@@ -1,4 +1,4 @@
-title Get User information
+title Update User information
 
 
 actor #green:0.5 "Workspace User" as w
